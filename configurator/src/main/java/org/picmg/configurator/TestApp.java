@@ -26,7 +26,7 @@ public class TestApp extends App{
             stage.setTitle("PICMG Configurator");
             stage.setScene(scene);
             stage.show();
-            clickSensors(scene);
+            clickEffecters(scene);
             System.out.println("Here is where the test would go");
         } catch (IOException e) {
             System.out.println(e);
@@ -37,6 +37,17 @@ public class TestApp extends App{
     {
         Window area = scene.getWindow();
         Node sensorTab = scene.lookup("#sensorTab");
+        Robot robot = new Robot();
+        Point2D point = sensorTab.localToScene(0,0);
+        System.out.println(scene.getX()+" "+scene.getY());
+        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mousePress(MouseButton.PRIMARY);
+        System.out.println("Done With testing");
+    }
+    public void clickEffecters(Scene scene)
+    {
+        Window area = scene.getWindow();
+        Node sensorTab = scene.lookup("#effectersTab");
         Robot robot = new Robot();
         Point2D point = sensorTab.localToScene(0,0);
         System.out.println(scene.getX()+" "+scene.getY());

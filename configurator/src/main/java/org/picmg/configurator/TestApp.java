@@ -44,15 +44,20 @@ public class TestApp extends App{
         robot.mousePress(MouseButton.PRIMARY);
         System.out.println("Done With testing");
     }
+
+    /**
+     * ClickEffecters
+     * This method would click the effecters tab using robot. Similar to the other click methods
+     * @param scene - main scene being shown on the screen
+     */
     public void clickEffecters(Scene scene)
     {
         Window area = scene.getWindow();
-        Node sensorTab = scene.lookup("#effectersTab");
+        Node effecterTab = scene.lookup("#effectersTab");
         Robot robot = new Robot();
-        Point2D point = sensorTab.localToScene(0,0);
+        Point2D point = effecterTab.localToScene(0,0);
         System.out.println(scene.getX()+" "+scene.getY());
         robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
-        System.out.println("Done With testing");
     }
 }

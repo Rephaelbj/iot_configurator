@@ -9,8 +9,9 @@
         <module name="configurator" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="16">
       <module name="configurator" target="16" />
+      <module name="configurator (1)" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>

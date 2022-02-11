@@ -287,6 +287,9 @@ public class MainScreenController implements Initializable {
 							TreeItem<TreeData> entityItem =
 									new TreeItem<>(new TreeData(data.leaf, ent, "logicalEntity"));
 							entityItem.setExpanded(true);
+							Node temp = entityItem.getGraphic();
+							temp.setId("logicalEntity");
+							entityItem.setGraphic(temp);
 							getTreeItem().getChildren().add(entityItem);
 
 							// now add bindings and parameters for the entity
@@ -732,6 +735,7 @@ public class MainScreenController implements Initializable {
 		device = new Device(hardware);
 
 		// create the tree based on the device
+		treeView.setId("device");
 		TreeItem<TreeData> rootNode = treeView.getRoot();
 		rootNode = new TreeItem<>(new TreeData(null, null, "device"));
 		treeView.setRoot(rootNode);

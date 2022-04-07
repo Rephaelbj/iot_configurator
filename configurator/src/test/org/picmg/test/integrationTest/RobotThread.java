@@ -8,7 +8,26 @@ public class RobotThread {
     private RobotThread next = null;
     private RobotThread prev = null;
     private volatile boolean wasStarted = false;
-    private volatile boolean isFinished = false;
+
+    public RobotThread() {
+        // head with no runner
+        runnable = null;
+        delay = 0;
+    }
+
+    /**
+     * Creates one or many runnables with equivalent, non-FX delay time between sequential deployments to FX thread queue.
+     * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
+     * @param runnables A list of runnable objects to execute on the FX thread after some delay
+     */
+    public RobotThread(int delay, Runnable... runnables) {
+        RobotThread cursor = null;
+        // create chain
+        for (int i = 1; i < runnables.length; i++) {
+            RobotThread next = new RobotThread(delay, runnables[i], cursor);
+            cursor = next;
+        }
+    }
 
     private RobotThread(int delay, Runnable runnable) {
         this.runnable = runnable;
@@ -20,28 +39,6 @@ public class RobotThread {
         this.prev = prev;
     }
 
-
-    public static RobotThread build(int delay, Runnable runnable) {
-        return new RobotThread(delay, runnable);
-    }
-
-    /**
-     * Run one or many runnables with equivalent, non-FX delay time between sequential deployments to FX thread queue.
-     * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
-     * @param runnables A list of runnable objects to execute on the FX thread after some delay
-     */
-    public static RobotThread build(int delay, Runnable... runnables) {
-        if (runnables.length < 1) return null;
-        if (runnables.length == 1) return build(delay, runnables[0]);
-        RobotThread head = new RobotThread(0, runnables[0]);
-        RobotThread cursor = head;
-        // create chain of cursors
-        for (int i = 1; i < runnables.length; i++) {
-            cursor = new RobotThread(delay, runnables[i], cursor);
-        }
-        return head;
-    }
-
     /**
      * Run the given function with FX threading after delaying on a generic Java thread. This threading hot potato
      * gives the FX threads processing time so UI components can catch up before the function is added to the FX thread
@@ -49,26 +46,30 @@ public class RobotThread {
      * Calling this on any instance in a chain will only execute the first of the chain.
      */
     public void run() {
+        // if this is not first in chain and previous has not run, start it
         if (prev != null && !prev.wasStarted) {
-            // if this is not first in chain and previous has not run, start it
             prev.run();
             return;
         }
-        if (prev != null && !prev.isFinished) {
-            // if this is not first in chain and previous has run, wait for it to finish and call
-            return;
-        }
+
         // lock to execute new thread only once
         if (wasStarted) {
             return;
         }
         wasStarted = true;
+
+        // skip if head empty
+        if (runnable == null && delay == 0) {
+            if (next != null) {
+                next.run();
+            }
+            return;
+        }
         new Thread(() -> {
             try {
                 Thread.sleep(delay);
                 Platform.runLater(() -> {
                     if (runnable != null) runnable.run();
-                    isFinished = true;
                     if (next != null) {
                         next.run();
                     }

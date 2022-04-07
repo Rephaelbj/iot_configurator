@@ -28,7 +28,7 @@ public class TestApp extends App {
     }
 
     private void evalTest() {
-        RobotThread.build(500, () -> RobotUtils.clickEffecters())
+        new RobotThread(500, () -> RobotUtils.clickEffecters())
                 .then(500,  () -> RobotUtils.click("#stepCheckbox"))
                 .then(50,   () -> RobotUtils.check("#stepCheckbox", "true"))
                 .then(20,   () -> RobotUtils.click("#stepCheckbox"))
@@ -40,18 +40,18 @@ public class TestApp extends App {
                 .then(20,   () -> RobotUtils.type("manufacturer 1"))
                 .then(20,   () -> RobotUtils.check("#manufacturerTextfield", "manufacturer 1"))
                 .wait(5000)
-                .then(RobotUtils::close)
+//                .then(RobotUtils::close)
                 .run();
     }
 
     private void typeTest() {
-        RobotThread.build(700,
+        new RobotThread(700,
                 () -> RobotUtils.clickEffecters(),
                 () -> RobotUtils.click("#manufacturerTextfield"),
                 () -> RobotUtils.type("This is Sample Text!!"),
                 () -> RobotUtils.click("#partNumberTextField"),
-                () -> RobotUtils.type("MORE Sample Text..."),
-                RobotUtils::close
+                () -> RobotUtils.type("MORE Sample Text...")
+//                RobotUtils::close
        ).run();
     }
 

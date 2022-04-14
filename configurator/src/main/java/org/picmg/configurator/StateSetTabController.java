@@ -22,39 +22,14 @@
 //
 package org.picmg.configurator;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.picmg.jsonreader.*;
 
-import java.io.*;
 import java.net.URL;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class StateSetTabController implements Initializable {
@@ -69,7 +44,7 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<ValueRecords, String> stateName;
 	@FXML private TextField stateSetId;
 	@FXML private TextField stateSetNameTextField;
-	@FXML private TextField stateSetVendorTextField;
+	@FXML private TextField stateSetVendorNameTextField;
 	@FXML private TextField stateSetVendorIANA;
 	@FXML private Button saveChangesButton;
 	@FXML private Button saveAsChangesButton;
@@ -84,6 +59,14 @@ public class StateSetTabController implements Initializable {
 	@FXML private ImageView outputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
 
+	StateSetTabController.StateSetTableData workingData = new StateSetTableData();
+	boolean modified;
+
+	public StateSetTableData getWorkingData() {
+		return workingData;
+	}
+
+
 	//TODO:change to use state sensor data class
 	//SensorTableData workingData = new SensorTableData();
 
@@ -91,7 +74,19 @@ public class StateSetTabController implements Initializable {
 	//		return workingData;
 	//	}
 	public class StateSetTableData{
+		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
 
+		public String getStateSetVendorName() {
+			return stateSetVendorName.get();
+		}
+
+		public SimpleStringProperty stateSetVendorNameProperty() {
+			return stateSetVendorName;
+		}
+
+		public void setStateSetVendorName(String stateSetVendorName) {
+			this.stateSetVendorName.set(stateSetVendorName);
+		}
 	}
 	public class ValueRecords{
 
@@ -99,7 +94,11 @@ public class StateSetTabController implements Initializable {
 
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
-		//TODO: finish
+		if (stateSetVendorNameTextField.getText().isBlank()) stateSetVendorNameTextField.setVisible(true);
+		else stateSetVendorNameTextField.setVisible(false);
+		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());;
+		modified = true;
+		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
@@ -121,4 +120,10 @@ public class StateSetTabController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: fill out with needed initialize
 	}
+
+	public boolean isValid() {
+		if(stateSetVendorNameTextField.isVisible()) return  false;
+		return true;
+	}
+
 }
